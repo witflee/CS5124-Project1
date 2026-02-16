@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Project Starter Template</title>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500&display=swap" rel="stylesheet">
+</head>
+<body>    
+    <!-- Add HTML content, SVG drawing area, ... -->
+    <div class="container">
+        <h1>Life Expectancy by Country (2019)</h1>
+        
+        <svg id="chart-life"></svg>
+
+        <div id="footer">
+            <div class="footer-col">
+                <button type="button" class="btn btn-link btn-sm" id="sorting-life">
+                    <img src="images/sort-down.svg" alt="" width="14" height="14" title="Sort"> Reverse order
+                </button>
+            </div>
+            <div class="footer-col text-right">
+                <a href="https://ourworldindata.org/grapher/life-expectancy?v=1&csvType=full&useColumnShortNames=false" class="btn btn-link btn-sm">Source: ourworldindata.org</a>
+            </div>
+        </div>
+
+
+        <h1>PM2.5 Air Pollution by Country (2019)</h1>
+        
+        <svg id="chart-air"></svg>
+
+        <div id="footer">
+            <div class="footer-col">
+                <button type="button" class="btn btn-link btn-sm" id="sorting-air">
+                    <img src="images/sort-down.svg" alt="" width="14" height="14" title="Sort"> Reverse order
+                </button>
+            </div>
+            <div class="footer-col text-right">
+                <a href="https://ourworldindata.org/grapher/pm25-air-pollution?v=1&csvType=full&useColumnShortNames=false" class="btn btn-link btn-sm">Source: ourworldindata.org</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="tooltip"></div>
+
+    <!-- D3 bundle -->
+    <script src="js/d3.v6.min.js"></script>
+
+    <!-- Our JS code -->
+    <script src="js/main.js"></script>
+
+    <!-- Extras: jQuery and Bootstrap JS -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/barchart.js"></script>
+</body>
+</html>
