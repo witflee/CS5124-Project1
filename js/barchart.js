@@ -36,11 +36,12 @@ class Barchart {
 
     vis.xScale = d3.scaleBand()
         .range([0, vis.width])
-        .paddingInner(0.2);
+        .paddingInner(0);
 
     vis.xAxis = d3.axisBottom(vis.xScale)
         .tickSizeOuter(0)
-        .tickFormat(d => d.length > 10 ? d.slice(0,10) + '...' : d); // Shorten long country names
+        // .tickFormat(d => d.length > 10 ? d.slice(0,10) + '...' : d); // Shorten long country names
+        .tickFormat(d => ""); // Show full country names
 
     vis.yAxis = d3.axisLeft(vis.yScale)
         .ticks(10)
@@ -114,7 +115,7 @@ class Barchart {
           d3.select('#tooltip')
             .style('opacity', 1)
             // Format number with million and thousand separator
-            .html(`<div class="tooltip-label">Value</div>${d3.format(',')(d.value)}`);
+            .html(`<div class="tooltip-label">${d.entity}</div>${d3.format(',.2f')(vis.yValue(d))}`);
         })
         .on('mousemove', (event) => {
           d3.select('#tooltip')
