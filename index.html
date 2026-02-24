@@ -24,59 +24,58 @@
             <li class="legend-btn" data-year="2019"><span class="legend-symbol"></span> 2019</li>
         </ul>
 
-        <h1>Life Expectancy by Country</h1>
-        
-        <svg id="chart-life"></svg>
-
-        <div id="footer">
-            <div class="footer-col">
-                <button type="button" class="btn btn-link btn-sm" id="sorting-life">
-                    <img src="images/sort-down.svg" alt="" width="14" height="14" title="Sort"> Reverse order
-                </button>
+        <!-- bar charts and scatterplot -->
+        <div class="row charts-row">
+            <div class="col-md-4 chart-col">
+                <h1>Life Expectancy by Country</h1>
+                <svg id="chart-life" class="chart-svg"></svg>
+                <div class="footer">
+                    <div class="footer-col">
+                        <button type="button" class="btn btn-link btn-sm" id="sorting-life">
+                            <img src="images/sort-down.svg" alt="" width="14" height="14" title="Sort"> Reverse order
+                        </button>
+                    </div>
+                    <div class="footer-col text-right">
+                        <a href="https://ourworldindata.org/grapher/life-expectancy?v=1&csvType=full&useColumnShortNames=false" class="btn btn-link btn-sm">Source: ourworldindata.org</a>
+                    </div>
+                </div>
             </div>
-            <div class="footer-col text-right">
-                <a href="https://ourworldindata.org/grapher/life-expectancy?v=1&csvType=full&useColumnShortNames=false" class="btn btn-link btn-sm">Source: ourworldindata.org</a>
+
+            <div class="col-md-4 chart-col">
+                <h1>Life Expectancy vs Air Pollution</h1>
+                <svg id="scatterplot" class="chart-svg"></svg>
+            </div>
+
+            <div class="col-md-4 chart-col">
+                <h1>PM2.5 Air Pollution by Country</h1>
+                <svg id="chart-air" class="chart-svg"></svg>
+                <div class="footer">
+                    <div class="footer-col">
+                        <button type="button" class="btn btn-link btn-sm" id="sorting-air">
+                            <img src="images/sort-down.svg" alt="" width="14" height="14" title="Sort"> Reverse order
+                        </button>
+                    </div>
+                    <div class="footer-col text-right">
+                        <a href="https://ourworldindata.org/grapher/pm25-air-pollution?v=1&csvType=full&useColumnShortNames=false" class="btn btn-link btn-sm">Source: ourworldindata.org</a>
+                    </div>
+                </div>
             </div>
         </div>
 
 
-        <h1>PM2.5 Air Pollution by Country</h1>
-        
-        <svg id="chart-air"></svg>
-
-        <div id="footer">
-            <div class="footer-col">
-                <button type="button" class="btn btn-link btn-sm" id="sorting-air">
-                    <img src="images/sort-down.svg" alt="" width="14" height="14" title="Sort"> Reverse order
-                </button>
+        <!-- choropleth maps -->
+        <div class="row maps-row">
+            <div class="col-md-6 map-col">
+                <h1>Life Expectancy by Country</h1>
+                <div id="map-life" class="map-div"></div>
             </div>
-            <div class="footer-col text-right">
-                <a href="https://ourworldindata.org/grapher/pm25-air-pollution?v=1&csvType=full&useColumnShortNames=false" class="btn btn-link btn-sm">Source: ourworldindata.org</a>
+            <div class="col-md-6 map-col">
+                <h1>PM2.5 Air Pollution by Country</h1>
+                <div id="map-air" class="map-div"></div>
             </div>
         </div>
 
-
-        <h1>Life Expectancy vs Air Pollution</h1>
-
-        <!-- Empty SVG drawing area -->
-        <svg id="scatterplot"></svg>
-
-        <div class="source">
-            Source: Data from <i>Our World in Data</i>
-        </div>
-
-
-        <h1>Life Expectancy by Country</h1>
-
-        <div id="map-life"></div>
-
-        <svg height="5" width="5" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="lightstripe" patternUnits="userSpaceOnUse" width="5" height="5"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgogIDxyZWN0IHdpZHRoPSc1JyBoZWlnaHQ9JzUnIGZpbGw9J3doaXRlJy8+CiAgPHBhdGggZD0nTTAgNUw1IDBaTTYgNEw0IDZaTS0xIDFMMSAtMVonIHN0cm9rZT0nIzg4OCcgc3Ryb2tlLXdpZHRoPScxJy8+Cjwvc3ZnPg==" x="0" y="0" width="5" height="5"> </image> </pattern> </defs></svg>
-
-
-        <h1>PM2.5 Air Pollution by Country</h1>
-
-        <div id="map-air"></div>
-
+        <!-- map "no data" pattern -->
         <svg height="5" width="5" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="lightstripe" patternUnits="userSpaceOnUse" width="5" height="5"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgogIDxyZWN0IHdpZHRoPSc1JyBoZWlnaHQ9JzUnIGZpbGw9J3doaXRlJy8+CiAgPHBhdGggZD0nTTAgNUw1IDBaTTYgNEw0IDZaTS0xIDFMMSAtMVonIHN0cm9rZT0nIzg4OCcgc3Ryb2tlLXdpZHRoPScxJy8+Cjwvc3ZnPg==" x="0" y="0" width="5" height="5"> </image> </pattern> </defs></svg>
 
     </div>

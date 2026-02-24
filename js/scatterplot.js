@@ -8,9 +8,9 @@ class Scatterplot {
   constructor(_config, _data) {
     this.config = {
       parentElement: _config.parentElement,
-      containerWidth: _config.containerWidth || 600,
-      containerHeight: _config.containerHeight || 400,
-      margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 35},
+      containerWidth: _config.containerWidth || 370,
+      containerHeight: _config.containerHeight || 300,
+      margin: _config.margin || {top: 35, right: 20, bottom: 20, left: 35},
       tooltipPadding: _config.tooltipPadding || 15
     }
     this.data = _data;
@@ -80,8 +80,8 @@ class Scatterplot {
 
     vis.svg.append('text')
         .attr('class', 'axis-title')
-        .attr('x', 0)
-        .attr('y', 0)
+        .attr('x', 10)
+        .attr('y', 10)
         .attr('dy', '.71em')
         .text('Life Expectancy (years)');
   }
@@ -130,9 +130,8 @@ class Scatterplot {
             .html(`
               <div class="tooltip-title">${d.entity}</div>
               <div class="tooltip-label"><i>${d.year}</i></div>
-              <ul>
-                <li>${d.expectancy} years</li>
-                <li>${d.concentration} μg/m³</li>
+              <div>${d3.format(',.2f')(d.expectancy)} years</div>
+              <div>${d3.format(',.2f')(d.concentration)} μg/m³</div>
               </ul>
             `);
         })

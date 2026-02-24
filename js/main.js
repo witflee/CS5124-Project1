@@ -114,29 +114,6 @@ d3.csv('data/combined.csv')
   })
   .catch(error => console.error(error));
 
-/**
- * Event listener: use color legend as filter
- */
-d3.selectAll('.legend-btn').on('click', function() {
-  // Toggle 'inactive' class
-  d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
-  
-  // Check which categories are active
-  toggleYear = [];
-  d3.selectAll('.legend-btn:not(.inactive)').each(function() {
-    toggleYear.push(d3.select(this).attr('data-year'));
-  });
-  console.log(toggleYear);
-
-  // Filter data accordingly and update vis
-  scatterplot.data = dataBoth.filter(d => toggleYear.includes(d.year));
-  barchartLife.data = dataLife.filter(d => toggleYear.includes(d.year));
-  barchartAir.data = dataAir.filter(d => toggleYear.includes(d.year));
-  barchartLife.updateVis();
-  barchartAir.updateVis();
-  scatterplot.updateVis();
-});
-
 /* =-=-=-= LEVEL TWO GOALS =-=-=-= */
 
 // Vis 4 and 5: add chloropleth maps to show the same info as the bar charts
@@ -193,7 +170,6 @@ Promise.all([
 
 /* =-=-=-= LEVEL THREE GOALS =-=-=-= */
 
-// Surprise 3rd dataset!
 // User should be able to toggle between multiple attributes to display
 
 
@@ -203,7 +179,7 @@ Promise.all([
 // Add detail-on-demand interactions to the distribution visualizations, showing the value and range of the selected bar
 // Add detail-on-demand interactions to the correlation visualizations, showing information about the selected county
 
-// I think the tooltips already cover these?
+// Goal accomplished by tooltips on hover
 
 
 /* =-=-=-= LEVEL FIVE GOALS =-=-=-= */
@@ -215,7 +191,28 @@ Promise.all([
 
 // Allow user to select a year and show the data for that year in all visualizations (instead of just 2019)
 
-// Implemented in legend buttons, years can be toggled
+/**
+ * Event listener: use color legend as filter
+ */
+d3.selectAll('.legend-btn').on('click', function() {
+  // Toggle 'inactive' class
+  d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
+  
+  // Check which categories are active
+  toggleYear = [];
+  d3.selectAll('.legend-btn:not(.inactive)').each(function() {
+    toggleYear.push(d3.select(this).attr('data-year'));
+  });
+  console.log(toggleYear);
+
+  // Filter data accordingly and update vis
+  scatterplot.data = dataBoth.filter(d => toggleYear.includes(d.year));
+  barchartLife.data = dataLife.filter(d => toggleYear.includes(d.year));
+  barchartAir.data = dataAir.filter(d => toggleYear.includes(d.year));
+  barchartLife.updateVis();
+  barchartAir.updateVis();
+  scatterplot.updateVis();
+});
 
 /**
  * Event listener: change ordering

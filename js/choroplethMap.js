@@ -9,11 +9,11 @@ class ChoroplethMap {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 600,
-      containerHeight: _config.containerHeight || 500,
-      margin: _config.margin || {top: 0, right: 0, bottom: 50, left: 0},
+      containerHeight: _config.containerHeight || 600,
+      margin: _config.margin || {top: 0, right: 0, bottom: 50, left: -31},
       tooltipPadding: 10,
-      legendBottom: -20,
-      legendLeft: 50,
+      legendBottom: 200,
+      legendLeft: 420,
       legendRectHeight: 12, 
       legendRectWidth: 150
     }
