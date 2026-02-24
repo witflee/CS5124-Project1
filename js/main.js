@@ -5,15 +5,16 @@
 /* =-=-=-= LEVEL ONE GOALS =-=-=-= */
 
 // histogram for life expectancy
-let barchartLife;
+let dataLife, barchartLife;
 d3.csv('data/life-expectancy/life-truncated.csv')
-  .then(dataLife => {
+  .then(_data => {
+    dataLife = _data;
     dataLife.forEach(d => {
       d.value = +d.value;
     });
 
     // Keep only data points from 2019
-    dataLife = dataLife.filter(d => d.year === '2019');
+    // dataLife = dataLife.filter(d => d.year === '2019');
 
     // keep only top 10 countries by life expectancy
     // dataLife = dataLife.sort((a,b) => b.value - a.value).slice(0,10);
@@ -23,6 +24,13 @@ d3.csv('data/life-expectancy/life-truncated.csv')
     
     // Initialize chart and then show it
     barchartLife = new Barchart({ parentElement: '#chart-life'}, dataLife);
+
+    // Make only 2019 active at the start
+    d3.selectAll('.legend-btn').classed('inactive', true);
+    d3.select('.legend-btn[data-year="2019"]').classed('inactive', false); 
+    toggleYear.push("2019");
+    barchartLife.data = dataLife.filter(d => toggleYear.includes(d.year));
+
     barchartLife.updateVis();
 
     // print total number of data points to console
@@ -31,15 +39,16 @@ d3.csv('data/life-expectancy/life-truncated.csv')
   .catch(error => console.error(error));
 
 // histogram for air pollution
-let barchartAir;
+let dataAir, barchartAir;
 d3.csv('data/pm25-air-pollution/pm25-air-pollution.csv')
-  .then(dataAir => {
+  .then(_data => {
+    dataAir = _data;
     dataAir.forEach(d => {
       d.value = +d.value;
     });
 
     // Keep only data points from 2019
-    dataAir = dataAir.filter(d => d.year === '2019');
+    // dataAir = dataAir.filter(d => d.year === '2019');
 
     // keep only top 10 countries by value
     // dataAir = dataAir.sort((a,b) => b.value - a.value).slice(0,10);
@@ -49,6 +58,13 @@ d3.csv('data/pm25-air-pollution/pm25-air-pollution.csv')
     
     // Initialize chart and then show it
     barchartAir = new Barchart({ parentElement: '#chart-air'}, dataAir);
+
+    // Make only 2019 active at the start
+    d3.selectAll('.legend-btn').classed('inactive', true);
+    d3.select('.legend-btn[data-year="2019"]').classed('inactive', false); 
+    toggleYear.push("2019");
+    barchartAir.data = dataAir.filter(d => toggleYear.includes(d.year));
+
     barchartAir.updateVis();
     // print total number of data points to console
     console.log(`Total number of data points: ${dataAir.length}`);
@@ -71,19 +87,27 @@ d3.select('#sorting-air').on('click', () => {
 });
 
 // scatterplot for life expectancy vs air pollution
+let dataBoth, scatterplot, toggleYear = [];
 d3.csv('data/combined.csv')
-  .then(data => {
+  .then(_data => {
+    dataBoth = _data;
     // Convert strings to numbers
-    data.forEach(d => {
+    dataBoth.forEach(d => {
       d.expectancy = +d.expectancy; // life expectancy
       d.concentration = +d.concentration; // PM2.5 concentration
     });
 
     // Keep only data points from 2019
-    data = data.filter(d => d.year === '2019');
+    // data = data.filter(d => d.year === '2019');
     
     // Initialize chart
-    const scatterplot = new Scatterplot({ parentElement: '#scatterplot'}, data);
+    scatterplot = new Scatterplot({ parentElement: '#scatterplot'}, dataBoth);
+
+    // Make only 2019 active at the start
+    d3.selectAll('.legend-btn').classed('inactive', true);
+    d3.select('.legend-btn[data-year="2019"]').classed('inactive', false); 
+    toggleYear.push("2019");
+    scatterplot.data = dataBoth.filter(d => toggleYear.includes(d.year));
     
     // Show chart
     scatterplot.updateVis();
@@ -98,13 +122,18 @@ d3.selectAll('.legend-btn').on('click', function() {
   d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
   
   // Check which categories are active
-  let selectedDifficulty = [];
+  toggleYear = [];
   d3.selectAll('.legend-btn:not(.inactive)').each(function() {
-    selectedDifficulty.push(d3.select(this).attr('data-difficulty'));
+    toggleYear.push(d3.select(this).attr('data-year'));
   });
+  console.log(toggleYear);
 
   // Filter data accordingly and update vis
-  scatterplot.data = data.filter(d => selectedDifficulty.includes(d.difficulty));
+  scatterplot.data = dataBoth.filter(d => toggleYear.includes(d.year));
+  barchartLife.data = dataLife.filter(d => toggleYear.includes(d.year));
+  barchartAir.data = dataAir.filter(d => toggleYear.includes(d.year));
+  barchartLife.updateVis();
+  barchartAir.updateVis();
   scatterplot.updateVis();
 });
 
@@ -174,6 +203,8 @@ Promise.all([
 // Add detail-on-demand interactions to the distribution visualizations, showing the value and range of the selected bar
 // Add detail-on-demand interactions to the correlation visualizations, showing information about the selected county
 
+// I think the tooltips already cover these?
+
 
 /* =-=-=-= LEVEL FIVE GOALS =-=-=-= */
 
@@ -183,6 +214,8 @@ Promise.all([
 /* =-=-=-= LEVEL SIX GOALS =-=-=-= */
 
 // Allow user to select a year and show the data for that year in all visualizations (instead of just 2019)
+
+// Implemented in legend buttons, years can be toggled
 
 /**
  * Event listener: change ordering

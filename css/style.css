@@ -18,11 +18,10 @@ h1 {
   font-size: 1.4rem;
 }
 .bar {
-  fill: #f38874;
   shape-rendering: crispEdges;
 }
 .bar:hover {
-  fill: #c15f45;
+  fill: #333333;
   transition: fill ease-in-out 200ms;
 }
 .axis text {
@@ -50,6 +49,62 @@ h1 {
 #sorting img {
   opacity: 0.8;
 }
+
+/* Legend */
+.legend {
+  margin: 20px 0;
+  list-style: none;
+  padding: 0;
+}
+.legend-btn {
+  display: inline-block;
+  margin: 0 50px 0 0;
+  cursor: pointer;
+  transition: all ease-in-out 200ms;
+}
+.legend-btn:hover.legend-btn.inactive:hover  {
+  opacity: 0.7;
+}
+.legend-btn.inactive {
+  opacity: 0.5;
+}
+.legend-symbol {
+  width: 12px;
+  height: 12px;
+  margin-right: 3px;
+  display: inline-block;
+}
+.legend-btn[data-year="2010"] .legend-symbol {
+  background: #8dd3c7;
+}
+.legend-btn[data-year="2011"] .legend-symbol {
+  background: #ffffb3;
+}
+.legend-btn[data-year="2012"] .legend-symbol {
+  background: #bebada;
+}
+.legend-btn[data-year="2013"] .legend-symbol {
+  background: #fb8072;
+}
+.legend-btn[data-year="2014"] .legend-symbol {
+  background: #80b1d3;
+}
+.legend-btn[data-year="2015"] .legend-symbol {
+  background: #fdb462;
+}
+.legend-btn[data-year="2016"] .legend-symbol {
+  background: #b3de69;
+}
+.legend-btn[data-year="2017"] .legend-symbol {
+  background: #fccde5;
+}
+.legend-btn[data-year="2018"] .legend-symbol {
+  background: #d9d9d9;
+}
+.legend-btn[data-year="2019"] .legend-symbol {
+  background: #bc80bd;
+}
+
 #tooltip {
   position: absolute;
   display: none;
