@@ -113,9 +113,12 @@ class Barchart {
     bars
         .on('mouseover', (event,d) => {
           d3.select('#tooltip')
-            .style('opacity', 1)
+            .style('display', 'block')
             // Format number with million and thousand separator
-            .html(`<div class="tooltip-label">${d.entity}</div>${d3.format(',.2f')(vis.yValue(d))}`);
+            .html(`
+              <div class="tooltip-title">${d.entity}</div>
+              <div class="tooltip-label"><i>${d.year}</i></div>
+              <div>${d3.format(',.2f')(vis.yValue(d))}</div>`);
         })
         .on('mousemove', (event) => {
           d3.select('#tooltip')
@@ -123,7 +126,7 @@ class Barchart {
             .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
         })
         .on('mouseleave', () => {
-          d3.select('#tooltip').style('opacity', 0);
+          d3.select('#tooltip').style('display', 'none');
         });
 
     // Update axes

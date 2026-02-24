@@ -124,12 +124,12 @@ class Scatterplot {
     circles
         .on('mouseover', (event,d) => {
           d3.select('#tooltip')
-            .style('opacity', 1)
+            .style('display', 'block')
             .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
             .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
             .html(`
               <div class="tooltip-title">${d.entity}</div>
-              <div><i>${d.year}</i></div>
+              <div class="tooltip-label"><i>${d.year}</i></div>
               <ul>
                 <li>${d.expectancy} years</li>
                 <li>${d.concentration} μg/m³</li>
@@ -137,7 +137,7 @@ class Scatterplot {
             `);
         })
         .on('mouseleave', () => {
-          d3.select('#tooltip').style('opacity', 0);
+          d3.select('#tooltip').style('display', 'none');
         });
     
     // Update the axes/gridlines

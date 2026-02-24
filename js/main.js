@@ -113,6 +113,54 @@ d3.selectAll('.legend-btn').on('click', function() {
 // Vis 4 and 5: add chloropleth maps to show the same info as the bar charts
 // Lay out visualizations in an organized way
 
+// Add first map for life expectancy
+Promise.all([
+  d3.json('data/world.json'),
+  d3.csv('data/life-expectancy/life-truncated.csv')
+]).then(dataChoro => {
+  const geoData = dataChoro[0];
+  const countryData = dataChoro[1];
+
+  // Combine both datasets by adding the life expectancy to the TopoJSON file
+  geoData.objects.countries.geometries.forEach(d => {
+    for (let i = 0; i < countryData.length; i++) {
+      if (d.id == countryData[i].code) {
+        d.properties.year = countryData[i].year;
+        d.properties.value = +countryData[i].value;
+      }
+    }
+  });
+
+  const choroplethMap = new ChoroplethMap({ 
+    parentElement: '#map-life'
+  }, geoData);
+})
+.catch(error => console.error(error));
+
+// Add second map for air pollution
+Promise.all([
+  d3.json('data/world.json'),
+  d3.csv('data/pm25-air-pollution/pm25-air-pollution.csv')
+]).then(dataChoro => {
+  const geoData = dataChoro[0];
+  const countryData = dataChoro[1];
+
+  // Combine both datasets by adding the pollution to the TopoJSON file
+  geoData.objects.countries.geometries.forEach(d => {
+    for (let i = 0; i < countryData.length; i++) {
+      if (d.id == countryData[i].code) {
+        d.properties.year = +countryData[i].year;
+        d.properties.value = +countryData[i].value;
+      }
+    }
+  });
+
+  const choroplethMap = new ChoroplethMap({ 
+    parentElement: '#map-air'
+  }, geoData);
+})
+.catch(error => console.error(error));
+
 
 /* =-=-=-= LEVEL THREE GOALS =-=-=-= */
 
