@@ -18,6 +18,7 @@ class ChoroplethMap {
       legendRectWidth: 150
     }
     this.data = _data;
+    this.fullData = _data; // Store full data for filtering
     this.initVis();
   }
   
@@ -116,7 +117,7 @@ class ChoroplethMap {
     countryPath
         .on('mousemove', (event,d) => {
           const dataValue = d.properties.value ? `${d.properties.value}` : 'No data available';
-          const dataYear = d.properties.year ? ` ${d.properties.year}` : 'No data available';
+          const dataYear = d.properties.yearShown ? `${d.properties.yearShown}` : 'No data available';
           d3.select('#tooltip')
             .style('display', 'block')
             .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
@@ -152,5 +153,34 @@ class ChoroplethMap {
         .attr('stop-color', d => d.color);
 
     vis.legendRect.attr('fill', 'url(#legend-gradient)');
+  }
+
+  /**
+   * Filter data by selected years and update visualization
+   * @param {Array} years - Array of year strings to display
+   */
+  filterByYears(years) {
+    let vis = this;
+    
+    // Set the value property based on selected years
+    // If multiple years selected, average them; if one year selected, use that value
+    vis.data.objects.countries.geometries.forEach(geometry => {
+      if (geometry.properties.yearData) {
+        const values = years
+          .map(year => geometry.properties.yearData[year])
+          .filter(v => v !== undefined && v !== null);
+
+        if (values.length > 0) {
+          // Get difference between values if multiple years are selected
+          geometry.properties.value = values.reduce((a, b) => b - a, 0);
+          geometry.properties.yearShown = years.length === 1 ? years[0] : years.join(', ');
+        } else {
+          geometry.properties.value = null;
+          geometry.properties.yearShown = null;
+        }
+      }
+    });
+    
+    vis.updateVis();
   }
 }

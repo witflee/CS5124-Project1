@@ -13,12 +13,6 @@ d3.csv('data/life-expectancy/life-truncated.csv')
       d.value = +d.value;
     });
 
-    // Keep only data points from 2019
-    // dataLife = dataLife.filter(d => d.year === '2019');
-
-    // keep only top 10 countries by life expectancy
-    // dataLife = dataLife.sort((a,b) => b.value - a.value).slice(0,10);
-
     // Sort data by life expectancy
     dataLife.sort((a,b) => b.value - a.value);
     
@@ -47,12 +41,6 @@ d3.csv('data/pm25-air-pollution/pm25-air-pollution.csv')
       d.value = +d.value;
     });
 
-    // Keep only data points from 2019
-    // dataAir = dataAir.filter(d => d.year === '2019');
-
-    // keep only top 10 countries by value
-    // dataAir = dataAir.sort((a,b) => b.value - a.value).slice(0,10);
-
     // Sort data by air quality
     dataAir.sort((a,b) => b.value - a.value);
     
@@ -62,7 +50,6 @@ d3.csv('data/pm25-air-pollution/pm25-air-pollution.csv')
     // Make only 2019 active at the start
     d3.selectAll('.legend-btn').classed('inactive', true);
     d3.select('.legend-btn[data-year="2019"]').classed('inactive', false); 
-    toggleYear.push("2019");
     barchartAir.data = dataAir.filter(d => toggleYear.includes(d.year));
 
     barchartAir.updateVis();
@@ -96,9 +83,6 @@ d3.csv('data/combined.csv')
       d.expectancy = +d.expectancy; // life expectancy
       d.concentration = +d.concentration; // PM2.5 concentration
     });
-
-    // Keep only data points from 2019
-    // data = data.filter(d => d.year === '2019');
     
     // Initialize chart
     scatterplot = new Scatterplot({ parentElement: '#scatterplot'}, dataBoth);
@@ -106,7 +90,6 @@ d3.csv('data/combined.csv')
     // Make only 2019 active at the start
     d3.selectAll('.legend-btn').classed('inactive', true);
     d3.select('.legend-btn[data-year="2019"]').classed('inactive', false); 
-    toggleYear.push("2019");
     scatterplot.data = dataBoth.filter(d => toggleYear.includes(d.year));
     
     // Show chart
@@ -120,6 +103,7 @@ d3.csv('data/combined.csv')
 // Lay out visualizations in an organized way
 
 // Add first map for life expectancy
+let choroplethMapLife;
 Promise.all([
   d3.json('data/world.json'),
   d3.csv('data/life-expectancy/life-truncated.csv')
@@ -129,21 +113,25 @@ Promise.all([
 
   // Combine both datasets by adding the life expectancy to the TopoJSON file
   geoData.objects.countries.geometries.forEach(d => {
+    d.properties.yearData = {};
     for (let i = 0; i < countryData.length; i++) {
       if (d.id == countryData[i].code) {
-        d.properties.year = countryData[i].year;
-        d.properties.value = +countryData[i].value;
+        d.properties.yearData[countryData[i].year] = +countryData[i].value;
       }
     }
   });
 
-  const choroplethMap = new ChoroplethMap({ 
+  choroplethMapLife = new ChoroplethMap({ 
     parentElement: '#map-life'
   }, geoData);
+  
+  // Apply initial year filter
+  choroplethMapLife.filterByYears(toggleYear.length > 0 ? toggleYear : ["2019"]);
 })
 .catch(error => console.error(error));
 
 // Add second map for air pollution
+let choroplethMapAir;
 Promise.all([
   d3.json('data/world.json'),
   d3.csv('data/pm25-air-pollution/pm25-air-pollution.csv')
@@ -153,17 +141,20 @@ Promise.all([
 
   // Combine both datasets by adding the pollution to the TopoJSON file
   geoData.objects.countries.geometries.forEach(d => {
+    d.properties.yearData = {};
     for (let i = 0; i < countryData.length; i++) {
       if (d.id == countryData[i].code) {
-        d.properties.year = +countryData[i].year;
-        d.properties.value = +countryData[i].value;
+        d.properties.yearData[countryData[i].year] = +countryData[i].value;
       }
     }
   });
 
-  const choroplethMap = new ChoroplethMap({ 
+  choroplethMapAir = new ChoroplethMap({ 
     parentElement: '#map-air'
   }, geoData);
+  
+  // Apply initial year filter
+  choroplethMapAir.filterByYears(toggleYear.length > 0 ? toggleYear : ["2019"]);
 })
 .catch(error => console.error(error));
 
@@ -212,6 +203,14 @@ d3.selectAll('.legend-btn').on('click', function() {
   barchartLife.updateVis();
   barchartAir.updateVis();
   scatterplot.updateVis();
+  
+  // Update choropleth maps with selected years
+  if (choroplethMapLife) {
+    choroplethMapLife.filterByYears(toggleYear);
+  }
+  if (choroplethMapAir) {
+    choroplethMapAir.filterByYears(toggleYear);
+  }
 });
 
 /**
