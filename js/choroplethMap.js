@@ -131,6 +131,15 @@ class ChoroplethMap {
         .on('mouseleave', () => {
           d3.select('#tooltip').style('display', 'none');
         });
+    
+    // Dispatch a custom event when a country is clicked so other components can react
+    countryPath.on('click', (event, d) => {
+      const container = document.querySelector(vis.config.parentElement);
+      if (container) {
+        const selEvent = new CustomEvent('countrySelected', { detail: { code: d.id, name: d.properties.name } });
+        container.dispatchEvent(selEvent);
+      }
+    });
 
     // Add legend labels
     vis.legend.selectAll('.legend-label')
@@ -162,8 +171,8 @@ class ChoroplethMap {
   filterByYears(years) {
     let vis = this;
     
-    // Set the value property based on selected years
-    // If multiple years selected, average them; if one year selected, use that value
+    // Set the value property based on selected year(s)
+    // If multiple years selected, calculate year-to-year difference between them
     vis.data.objects.countries.geometries.forEach(geometry => {
       if (geometry.properties.yearData) {
         const values = years

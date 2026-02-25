@@ -30,22 +30,25 @@ class Barchart {
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
 
     // Initialize scales and axes
-     vis.colorScale = d3.scaleOrdinal()
+      vis.colorScale = d3.scaleOrdinal()
         .range(['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd']) // colorbrewer colors
-        .domain([2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019]); // years in dataset
+        .domain(['2010','2011','2012','2013','2014','2015','2016','2017','2018','2019']); // years in dataset
 
     // Important: we flip array elements in the y output range to position the rectangles correctly
     vis.yScale = d3.scaleLinear()
         .range([vis.height, 0]) 
 
     vis.xScale = d3.scaleBand()
-        .range([0, vis.width])
-        .paddingInner(0);
+      .range([0, vis.width])
+      .paddingInner(0);
+
+    // Sub-scale for grouping multiple years within each x band
+    vis.xSub = d3.scaleBand()
+      .padding(0);
 
     vis.xAxis = d3.axisBottom(vis.xScale)
         .tickSizeOuter(0)
-        // .tickFormat(d => d.length > 10 ? d.slice(0,10) + '...' : d); // Shorten long country names
-        .tickFormat(d => ""); // Show full country names
+        .tickFormat(d => ""); // Hide country names
 
     vis.yAxis = d3.axisLeft(vis.yScale)
         .ticks(10)
@@ -88,7 +91,13 @@ class Barchart {
     vis.yValue = d => d.value;
 
     // Set the scale input domains
-    vis.xScale.domain(vis.data.map(vis.xValue));
+    const entities = Array.from(new Set(vis.data.map(vis.xValue)));
+    vis.xScale.domain(entities);
+
+    // Determine selected years present in the data
+    vis.selectedYears = Array.from(new Set(vis.data.map(d => String(vis.colorValue(d)))));
+    vis.xSub.domain(vis.selectedYears).range([0, vis.xScale.bandwidth()]);
+
     vis.yScale.domain([0, d3.max(vis.data, vis.yValue)]);
 
     vis.renderVis();
@@ -100,31 +109,50 @@ class Barchart {
   renderVis() {
     let vis = this;
 
-    // let length = vis.data.length;
-    // let total = vis.xScale.domain().length*10;
-    // let adjusted = (vis.data.length)/(vis.xScale.domain().length);
+    // Create groups for each entity and bind values per entity
+    const grouped = Array.from(d3.group(vis.data, vis.xValue), ([key, values]) => ({ key, values }));
 
-    // Add rectangles
-    let bars = vis.chart.selectAll('.bar')
-        .data(vis.data, vis.xValue)
-      .join('rect');
-    
-    bars.style('opacity', 0.5)
-      .transition().duration(1000)
-        .style('opacity', 1)
-        .attr('class', 'bar')
-        .attr('x', d => vis.xScale(vis.xValue(d)))
-        .attr('width', vis.xScale.bandwidth())
-        .attr('height', d => vis.height - vis.yScale(vis.yValue(d)))
-        .attr('y', d => vis.yScale(vis.yValue(d)))
-        .attr('fill', d => vis.colorScale(vis.colorValue(d)));
+    const groups = vis.chart.selectAll('.bar-group')
+      .data(grouped, d => d.key)
+      .join(
+        enter => enter.append('g').attr('class', 'bar-group'),
+        update => update,
+        exit => exit.remove()
+      );
 
-    // console.log("length: "+length);
-    // console.log("total: "+total);
-    // console.log("adjusted: " + (vis.data.length)/(vis.xScale.domain().length));
+    groups.attr('transform', d => `translate(${vis.xScale(d.key)},0)`);
+
+    // Within each group, create/update rects for each year
+    groups.each(function(d) {
+      const g = d3.select(this);
+      const rects = g.selectAll('rect').data(d.values, v => v.year + '-' + v.entity);
+
+      rects.join(
+        enter => enter.append('rect')
+          .attr('class', 'bar')
+          .attr('x', v => vis.xSub(String(vis.colorValue(v))))
+          .attr('width', vis.xSub.bandwidth())
+          .attr('y', vis.height)
+          .attr('height', 0)
+          .attr('fill', v => vis.colorScale(String(vis.colorValue(v))))
+          .style('opacity', 0.8)
+          .call(enter => enter.transition().duration(800)
+            .attr('y', v => vis.yScale(vis.yValue(v)))
+            .attr('height', v => vis.height - vis.yScale(vis.yValue(v)))
+          ),
+        update => update.call(update => update.transition().duration(800)
+            .attr('x', v => vis.xSub(String(vis.colorValue(v))))
+            .attr('width', vis.xSub.bandwidth())
+            .attr('y', v => vis.yScale(vis.yValue(v)))
+            .attr('height', v => vis.height - vis.yScale(vis.yValue(v)))
+            .attr('fill', v => vis.colorScale(String(vis.colorValue(v))))
+          ),
+        exit => exit.call(exit => exit.transition().duration(400).attr('height',0).attr('y',vis.height).remove())
+      );
+    });
     
-    // Tooltip event listeners
-    bars
+    // Tooltip event listeners on individual rects
+    vis.chart.selectAll('.bar')
         .on('mouseover', (event,d) => {
           d3.select('#tooltip')
             .style('display', 'block')

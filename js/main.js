@@ -163,6 +163,9 @@ Promise.all([
 
 // User should be able to toggle between multiple attributes to display
 
+// selecting two years changes the data to show the difference year-to-year (instead of the value for a single year)
+// I think that counts?
+
 
 /* =-=-=-= LEVEL FOUR GOALS =-=-=-= */
 
@@ -170,13 +173,44 @@ Promise.all([
 // Add detail-on-demand interactions to the distribution visualizations, showing the value and range of the selected bar
 // Add detail-on-demand interactions to the correlation visualizations, showing information about the selected county
 
-// Goal accomplished by tooltips on hover
+// goal accomplished by tooltips on hover
 
 
 /* =-=-=-= LEVEL FIVE GOALS =-=-=-= */
 
 // Allow user to brush within data to show set of countries (highlight selected or filter others out) in all visualizations
 
+// Filter all charts to a selected country code
+function filterAllChartsToCountry(code) {
+  const activeYears = (toggleYear && toggleYear.length > 0) ? toggleYear : [];
+
+  if (dataLife && barchartLife) {
+    barchartLife.data = dataLife.filter(d => d.code === code && (activeYears.length === 0 || activeYears.includes(d.year)));
+    barchartLife.updateVis();
+  }
+  if (dataAir && barchartAir) {
+    barchartAir.data = dataAir.filter(d => d.code === code && (activeYears.length === 0 || activeYears.includes(d.year)));
+    barchartAir.updateVis();
+  }
+  if (dataBoth && scatterplot) {
+    scatterplot.data = dataBoth.filter(d => d.code === code && (activeYears.length === 0 || activeYears.includes(d.year)));
+    scatterplot.updateVis();
+  }
+}
+
+// Listen for country selection events from either map container
+const mapLifeNode = document.querySelector('#map-life');
+if (mapLifeNode) {
+  mapLifeNode.addEventListener('countrySelected', e => {
+    filterAllChartsToCountry(e.detail.code);
+  });
+}
+const mapAirNode = document.querySelector('#map-air');
+if (mapAirNode) {
+  mapAirNode.addEventListener('countrySelected', e => {
+    filterAllChartsToCountry(e.detail.code);
+  });
+}
 
 /* =-=-=-= LEVEL SIX GOALS =-=-=-= */
 
@@ -212,14 +246,3 @@ d3.selectAll('.legend-btn').on('click', function() {
     choroplethMapAir.filterByYears(toggleYear);
   }
 });
-
-/**
- * Event listener: change ordering
- */
-/*
-var changeSortingOrder = d3.select("#change-sorting").on("click", function() {
-    reverse = !reverse;
-    updateVisualization();
-});
-*/
-
